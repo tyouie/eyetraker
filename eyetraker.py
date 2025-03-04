@@ -12,35 +12,35 @@ def getuser():
     return UserName
 
 
-# ¬õÂI°Ñ¼Æ
+# ç´…é»åƒæ•¸
 DOT_RADIUS = 10
 RED = (255, 0, 0)
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 
 
-# ªì©l¤ÆÄá¹³ÀY
+# åˆå§‹åŒ–æ”åƒé ­
 def setup_camera(camera_id, width=640, height=480):
     cap = cv2.VideoCapture(camera_id)
     if not cap.isOpened():
-        print(f"µLªk¥´¶}Äá¹³ÀY {camera_id}")
+        print(f"ç„¡æ³•æ‰“é–‹æ”åƒé ­ {camera_id}")
         return None
     cap.set(cv2.CAP_PROP_FRAME_WIDTH, width)
     cap.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
     return cap
 
-# ³Ğ«Ø¼v¤ù«O¦s¸ê®Æ§¨
+# å‰µå»ºå½±ç‰‡ä¿å­˜è³‡æ–™å¤¾
 def create_output_dir(UserName):
     output_dir = r"C:/Users/wegrty/source/repos/eyetraker/eyetraker/user/"+UserName
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
     return output_dir
 
-# ¬õÂI°{Ã{»P¿ı»s¾ã¦X
+# ç´…é»é–ƒçˆèˆ‡éŒ„è£½æ•´åˆ
 def flash_and_record(positions,screen,font,WIDTH,HEIGHT,cap, writer, game_writer, output_dir):
     times=0
     for pos in positions:
-        # ÀË¬d¬O§_°h¥X
+        # æª¢æŸ¥æ˜¯å¦é€€å‡º
         if times==9:
             break
             #return False
@@ -51,14 +51,14 @@ def flash_and_record(positions,screen,font,WIDTH,HEIGHT,cap, writer, game_writer
                if event.key == pygame.K_ESCAPE:
                    break
 
-        # µe¬õÂI
+        # ç•«ç´…é»
         screen.fill(BLACK)
         pygame.draw.circle(screen, RED, pos, DOT_RADIUS)
         coord_text = font.render(f"Coordinates: {pos[0]}, {pos[1]}", True, WHITE)
         screen.blit(coord_text, (20, 20))
         pygame.display.flip()
 
-        # ªì©l¤Æ¼v¤ù¤å¥ó¦W
+        # åˆå§‹åŒ–å½±ç‰‡æ–‡ä»¶å
         timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
         video_path = os.path.join(output_dir, f"tracking_{timestamp}.avi")
         game_video_path = os.path.join(output_dir, f"game_{timestamp}.avi")
@@ -69,39 +69,39 @@ def flash_and_record(positions,screen,font,WIDTH,HEIGHT,cap, writer, game_writer
         writer.open(video_path, fourcc, frame_rate, frame_size)
         game_writer.open(game_video_path, fourcc, frame_rate, (WIDTH, HEIGHT))
 
-        # ¶}©l¿ı»s¬õÂIÅã¥Ü´Á¶¡
+        # é–‹å§‹éŒ„è£½ç´…é»é¡¯ç¤ºæœŸé–“
         start_time = time.time()
-        while time.time() - start_time < 3:  # 3¬í¿ı»s®É¶¡
-            # ¿ı»sÄá¹³ÀYµe­±
+        while time.time() - start_time < 3:  # 3ç§’éŒ„è£½æ™‚é–“
+            # éŒ„è£½æ”åƒé ­ç•«é¢
             ret, frame = cap.read()
             if not ret:
-                print("µLªkÅª¨úÄá¹³ÀYµe­±¡I")
+                print("ç„¡æ³•è®€å–æ”åƒé ­ç•«é¢ï¼")
                 break
-            frame = cv2.flip(frame, 1)  # Ãè¹³µe­±
+            frame = cv2.flip(frame, 1)  # é¡åƒç•«é¢
             writer.write(frame)
 
-             #¿ı»s¹CÀ¸µe­±
+             #éŒ„è£½éŠæˆ²ç•«é¢
             #game_surface = pygame.surfarray.array3d(screen)
             #game_frame = cv2.cvtColor(game_surface.swapaxes(0, 1), cv2.COLOR_RGB2BGR)
             #game_writer.write(game_frame)
 
-        # ²M°£¬õÂI¨Ãµ¥«İ
+        # æ¸…é™¤ç´…é»ä¸¦ç­‰å¾…
         writer.release()
         game_writer.release()
         screen.fill(BLACK)
         pygame.display.flip()
-        time.sleep(2)  # 2¬í¶¡¹j
+        time.sleep(2)  # 2ç§’é–“éš”
         times+=1
         print(times)
     return True
 
-# ¥Dµ{¦¡
+# ä¸»ç¨‹å¼
 def main(output_dir):
-    # ªì©l¤ÆÄá¹³ÀY
+    # åˆå§‹åŒ–æ”åƒé ­
     camera_id = 0
     cap = setup_camera(camera_id)
     if not cap:
-        print("Äá¹³ÀYªì©l¤Æ¥¢±Ñ¡I")
+        print("æ”åƒé ­åˆå§‹åŒ–å¤±æ•—ï¼")
         return
 
     print(output_dir)
@@ -109,29 +109,29 @@ def main(output_dir):
     game_writer = cv2.VideoWriter()
 
     
-    # ªì©l¤Æ pygame
+    # åˆå§‹åŒ– pygame
     pygame.init()
-    # ³]©w¥ş¿Ã¹õ¼Ò¦¡
+    # è¨­å®šå…¨è¢å¹•æ¨¡å¼
 
-    screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN,display=0)#display =1
+    screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN,display=1)#display =1
     WIDTH, HEIGHT = screen.get_size()
     pygame.display.set_caption("Red Dot Tracker")
     print(WIDTH,HEIGHT)
 
-    # ¬õÂIªº¦ì¸m
+    # ç´…é»çš„ä½ç½®
     positions = [
-        (WIDTH // 4, HEIGHT // 4),  # ¥ª¤W
-        (WIDTH // 2, HEIGHT // 4),  # ¤W¤¤
-        (3 * WIDTH // 4, HEIGHT // 4),  # ¥k¤W
-        (WIDTH // 4, HEIGHT // 2),  # ¤¤¥ª
-        (WIDTH // 2, HEIGHT // 2),  # ¤¤¤ß
-        (3 * WIDTH // 4, HEIGHT // 2),  # ¤¤¥k
-        (WIDTH // 4, 3 * HEIGHT // 4),  # ¥ª¤U
-        (WIDTH // 2, 3 * HEIGHT // 4),  # ¤U¤¤
-        (3 * WIDTH // 4, 3 * HEIGHT // 4),  # ¥k¤U
+        (WIDTH // 4, HEIGHT // 4),  # å·¦ä¸Š
+        (WIDTH // 2, HEIGHT // 4),  # ä¸Šä¸­
+        (3 * WIDTH // 4, HEIGHT // 4),  # å³ä¸Š
+        (WIDTH // 4, HEIGHT // 2),  # ä¸­å·¦
+        (WIDTH // 2, HEIGHT // 2),  # ä¸­å¿ƒ
+        (3 * WIDTH // 4, HEIGHT // 2),  # ä¸­å³
+        (WIDTH // 4, 3 * HEIGHT // 4),  # å·¦ä¸‹
+        (WIDTH // 2, 3 * HEIGHT // 4),  # ä¸‹ä¸­
+        (3 * WIDTH // 4, 3 * HEIGHT // 4),  # å³ä¸‹
     ]
 
-    # ¦rÅé³]©w
+    # å­—é«”è¨­å®š
     font = pygame.font.SysFont(None, 36)
 
     running = True
@@ -139,7 +139,7 @@ def main(output_dir):
         flash_and_record(positions,screen,font,WIDTH,HEIGHT,cap, writer, game_writer, output_dir)
 
     except KeyboardInterrupt:
-        print("µ{¦¡³Q¤¤Â_")
+        print("ç¨‹å¼è¢«ä¸­æ–·")
 
     finally:
         cap.release()
@@ -148,21 +148,21 @@ def main(output_dir):
         pygame.quit()
 
 
-# GUI ¬É­±
+# GUI ç•Œé¢
 class gui:
     def __init__(self, root):
         self.root = root
         self.root.title("Face ID System")
         self.root.geometry("300x250")
 
-        # µù¥U«ö¶s
-        self.start_button = tk.Button(root, text="¶}©l®Õ·Ç", command=self.mainfunc, width=20, height=2)
+        # è¨»å†ŠæŒ‰éˆ•
+        self.start_button = tk.Button(root, text="é–‹å§‹æ ¡æº–", command=self.mainfunc, width=20, height=2)
         self.start_button.pack(pady=10)
         #exit
-        self.exit_button = tk.Button(root, text="°h¥X", command=root.quit, width=20, height=2)
+        self.exit_button = tk.Button(root, text="é€€å‡º", command=root.quit, width=20, height=2)
         self.exit_button.pack(pady=10)
     def mainfunc(self):
-        user_name = simpledialog.askstring("µù¥U", "½Ğ¿é¤J¨Ï¥ÎªÌ¦WºÙ¡G")
+        user_name = simpledialog.askstring("è¨»å†Š", "è«‹è¼¸å…¥ä½¿ç”¨è€…åç¨±ï¼š")
         if user_name:
             output_dir=create_output_dir(user_name)
             main(output_dir)
