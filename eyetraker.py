@@ -1,11 +1,11 @@
-#-*- coding: cp950 -*-
+from mimetypes import init
 import pygame
 import time
 import cv2
 import datetime
 import os
 import tkinter as tk
-from tkinter import simpledialog, messagebox
+from tkinter import simpledialog, messagebox,filedialog
 
 def getuser():
     UserName=input("input username : ")
@@ -30,14 +30,15 @@ def setup_camera(camera_id, width=640, height=480):
     return cap
 
 # 創建影片保存資料夾
-def create_output_dir(UserName):
-    output_dir = r"C:/Users/wegrty/source/repos/eyetraker/eyetraker/user/"+UserName
+def create_output_dir(UserName,filepath):
+    output_dir = filepath+"/"+UserName
+    print(output_dir)
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
-    return output_dir
+    #return output_dir
 
 # 紅點閃爍與錄製整合
-def flash_and_record(positions,screen,font,WIDTH,HEIGHT,cap, writer, game_writer, output_dir):
+def flash_and_record(positions,screen,font,WIDTH,HEIGHT,cap, writer, game_writer, output_dir,exper):
     times=0
     for pos in positions:
         # 檢查是否退出
@@ -59,9 +60,9 @@ def flash_and_record(positions,screen,font,WIDTH,HEIGHT,cap, writer, game_writer
         pygame.display.flip()
 
         # 初始化影片文件名
-        timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-        video_path = os.path.join(output_dir, f"tracking_{timestamp}.avi")
-        game_video_path = os.path.join(output_dir, f"game_{timestamp}.avi")
+        #timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+        video_path = os.path.join(output_dir, f"tracking_{exper}_{times}.avi")
+        game_video_path = os.path.join(output_dir, f"game_{exper}_{times}.avi")
         fourcc = cv2.VideoWriter_fourcc(*'XVID')
         frame_rate = 30
         frame_size = (int(cap.get(cv2.CAP_PROP_FRAME_WIDTH)),
@@ -96,7 +97,7 @@ def flash_and_record(positions,screen,font,WIDTH,HEIGHT,cap, writer, game_writer
     return True
 
 # 主程式
-def main(output_dir):
+def main(output_dir,expertimes):
     # 初始化攝像頭
     camera_id = 0
     cap = setup_camera(camera_id)
@@ -113,7 +114,7 @@ def main(output_dir):
     pygame.init()
     # 設定全螢幕模式
 
-    screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN,display=1)#display =1
+    screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN,display=0)#display =1
     WIDTH, HEIGHT = screen.get_size()
     pygame.display.set_caption("Red Dot Tracker")
     print(WIDTH,HEIGHT)
@@ -136,7 +137,7 @@ def main(output_dir):
 
     running = True
     try:
-        flash_and_record(positions,screen,font,WIDTH,HEIGHT,cap, writer, game_writer, output_dir)
+        flash_and_record(positions,screen,font,WIDTH,HEIGHT,cap, writer, game_writer, output_dir,expertimes)
 
     except KeyboardInterrupt:
         print("程式被中斷")
@@ -158,14 +159,26 @@ class gui:
         # 註冊按鈕
         self.start_button = tk.Button(root, text="開始校準", command=self.mainfunc, width=20, height=2)
         self.start_button.pack(pady=10)
+        #creat new user file
+        self.CreatUser_button=tk.Button(root, text="creat user file", command=self.CreactUserFile, width=20, height=2)
+        self.CreatUser_button.pack(pady=10)
         #exit
         self.exit_button = tk.Button(root, text="退出", command=root.quit, width=20, height=2)
         self.exit_button.pack(pady=10)
     def mainfunc(self):
-        user_name = simpledialog.askstring("註冊", "請輸入使用者名稱：")
+        
+        FilePath=filedialog.askdirectory(parent=self.root,initialdir=r"C:/Users/wegrty/source/repos/eyetraker/")
+        expertimes= simpledialog.askstring("", "請輸入第幾次試驗：")
+        if FilePath :
+            main(FilePath,expertimes)
+        else:
+            messagebox.showinfo("Warning","請選取目錄")
+    def CreactUserFile(self):
+        user_name = simpledialog.askstring("creact new user", "請輸入使用者名稱：")
+        filepath=filedialog.askdirectory(parent=self.root,initialdir=r"C:/Users/wegrty/source/repos/eyetraker/")
         if user_name:
-            output_dir=create_output_dir(user_name)
-            main(output_dir)
+            create_output_dir(user_name,filepath)
+            #main(output_dir)
 
 if __name__ == "__main__":
     root = tk.Tk()
